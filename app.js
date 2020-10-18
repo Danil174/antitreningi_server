@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const {v4} = require('uuid');
 
-const PORT = process.env.POTR || 3000;
+const PORT = process.env.PORT || 3000;
 
 let GOODS = [
   {id: v4(), title: 'молоко 1л', category: 'продукты', price: 45, amount: 2, isBought: false},

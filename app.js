@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const {v4} = require('uuid');
 
-const PORT = process.env.POTR;
+const PORT = process.env.POTR || 3000;
 
 let GOODS = [
   {id: v4(), title: 'молоко 1л', category: 'продукты', price: 45, amount: 2, isBought: false},
@@ -14,10 +14,6 @@ let CATEGORIES = ['продукты', 'косметика'];
 let TOKEN = v4();
 
 app.use(express.json());
-
-app.get('/api', (req, res)=>{
-  res.status(200).json({message: `ok`});
-})
 
 app.post('/api/login', (req, res)=>{
   if (req.body.email === `test`) {
@@ -65,5 +61,9 @@ app.patch('/api/categories', checkSignIn, (req, res) => {
   GOODS.splice(idx, 1);
   res.status(200).json({message: 'succes'});
 });
+
+app.get('/', (req, res)=>{
+  res.end('<h1>Test</h1>')
+})
 
 app.listen(PORT, () => console.log('server started...'));

@@ -67,8 +67,10 @@ app.put('/api/categories', checkSignIn, (req, res) => {
   res.status(200).json(CATEGORIES);
 });
 
-app.get('/', (req, res)=>{
-  res.end('<h1>Test</h1>')
-})
+app.use(express.static(path.resolve(__dirname, 'static')));
+
+app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, 'static', index.html))
+});
 
 app.listen(PORT, () => console.log(`server started at ${PORT}`));

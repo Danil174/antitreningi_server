@@ -9,14 +9,20 @@ let GOODS = [
   {id: v4(), title: 'old spice', category: 'косметика', price: 300, amount: 1, isBought: false}
 ];
 
-let CATEGORIES = ['продукты', 'косметика'];
+let CATEGORIES = [
+  { selected: false, label: 'продукты' },
+  { selected: false, label: 'косметика' },
+];
 
-let TOKEN = v4();
+let TOKEN;
 
 app.use(express.json());
 
-app.post('/api/login', (req, res)=>{
-  if (req.body.email === `test`) {
+app.post('/api/login', (req, res) => {
+  TOKEN = v4();
+  const mailRE = /^([a-z0-9_-]+\.)*[a-z0-9_-]+@[a-z0-9_-]+(\.[a-z0-9_-]+)*\.[a-z]{2,6}$/;
+  const isValid = mailRE.test(String(req.body.email).toLowerCase());
+  if (isValid && req.body.password !== '') {
     res.status(200).json({token: TOKEN});
   } else {
     res.status(401).json({message: 'Unauthorized'});
@@ -42,28 +48,27 @@ app.post('/api/goods', checkSignIn, (req, res) => {
 });
 
 app.delete('/api/goods/:id', checkSignIn, (req, res) => {
-  GOODS = GOODS.filter(it => it.id !== req.params.id);
+  GOODS = GOODS.filter(it => it.id !== req.body.id);
   res.status(200).json({message: 'succes'});
 });
 
 app.patch('/api/goods/:id', checkSignIn, (req, res) => {
-  const idx = GOODS.findIndex(it => it.id === req.params.id);
+  const idx = GOODS.findIndex(it => it.id === req.body.id);
   GOODS[idx].isBought = !GOODS[idx].isBought;
-  res.status(200).json({message: 'succes'});
+  res.status(200).json(GOODS[idx]);
 });
 
 app.get('/api/categories', checkSignIn, (req, res) => {
   res.status(200).json(CATEGORIES);
 });
 
-app.patch('/api/categories', checkSignIn, (req, res) => {
-  const idx = GOODS.findIndex(it => it === req.params);
-  GOODS.splice(idx, 1);
-  res.status(200).json({message: 'succes'});
+app.put('/api/categories', checkSignIn, (req, res) => {
+  CATEGORIES = req.body.arr;
+  res.status(200).json(CATEGORIES);
 });
 
 app.get('/', (req, res)=>{
   res.end('<h1>Test</h1>')
 })
 
-app.listen(PORT, () => console.log('server started...'));
+app.listen(PORT, () => console.log(`server started at ${PORT}`));
